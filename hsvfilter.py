@@ -2,7 +2,7 @@
 class HsvFilter:
 
     def __init__(self, hMin=None, sMin=None, vMin=None, hMax=None, sMax=None, vMax=None, 
-                    sAdd=None, sSub=None, vAdd=None, vSub=None):
+                    sAdd=None, sSub=None, vAdd=None, vSub=None, invert=None):
         self.hMin = hMin
         self.sMin = sMin
         self.vMin = vMin
@@ -13,3 +13,4 @@ class HsvFilter:
         self.sSub = sSub
         self.vAdd = vAdd
         self.vSub = vSub
+        self.invert = invert
