@@ -1,7 +1,6 @@
 from tkinter import *
-import tkinter as tk
-import time
-
+from turtle import Turtle
+from xml.etree.ElementTree import TreeBuilder
 
 class SimpleToggle:
     def __init__(self):
@@ -13,15 +12,16 @@ class SimpleToggle:
 
         # Values
         self.reverseState = False
+        self._save = False
 
     # Color
-        # row0 - Color Control (Hue) [0-360]
+        # row0 - Color Control (Hue) [0-179]
         Label(self.window, text="Color Control").grid(column=0, row=0)
-        self.color = Scale(self.window, from_=0, to=360, orient=HORIZONTAL)
+        self.color = Scale(self.window, from_=0, to=180, orient=HORIZONTAL)
         self.color.grid(column=1, row=0)
         #row1 -Color Range Control (Hue Range) 
         Label(self.window, text="Color Range").grid(column=0, row=1)
-        self.colorRange = Scale(self.window, from_=0, to=360, orient=HORIZONTAL)
+        self.colorRange = Scale(self.window, from_=0, to=180, orient=HORIZONTAL)
         self.colorRange.grid(column=1, row=1)
 
     # Saturation
@@ -54,16 +54,31 @@ class SimpleToggle:
         Label(self.window, text="Reset All Value").grid(column=0, row=11)
         self.reset = Button(self.window, text="Reset", command=self._initScaleVal).grid(column=1, row=11)
 
+        # Save 
+        Label(self.window, text="Save Image").grid(column=0, row=12)
+        self.save = Button(self.window, text='Save', command=self.saveHandle).grid(column=1, row=12)        
+
+
         self._initScaleVal()
 
     # set all scale to defult value
     def _initScaleVal(self):
+        self.color.set(0)
+        self.colorRange.set(50)
         self.colorRange.set(50)
         self.sat.set(122)
         self.satRange.set(255)
         self.bright.set(122)
         self.brightRange.set(255)
-    
+
+    def saveHandle(self, toFalse=False):
+        # determine whether or not to change self._save
+        if toFalse == True and self._save == True:
+            self._save = False
+            return True
+        elif toFalse == False:
+            self._save = True
+
     # Call by Reverse Button
     def _ReverseStateChagne(self):
         self.reverseState = True if self.reverseState == False else False
@@ -86,36 +101,42 @@ class SimpleToggle:
         if self.colorVal - self.colorRangeVal >= 0:
             value[0][0] = self.colorVal - self.colorRangeVal
         else:
-            value[0][0] = 360 - abs(self.colorVal - self.colorRangeVal)
+            value[0][0] = 0
+            # value[0][0] = 180 - abs(self.colorVal - self.colorRangeVal)
             # upper
-        if self.colorVal + self.colorRangeVal <= 360:
+        if self.colorVal + self.colorRangeVal <= 180:
             value[1][0] = self.colorVal + self.colorRangeVal
         else:
-            value[1][0] = (self.colorVal + self.colorRangeVal)%360
+            value[1][0] = 180
+            # value[1][0] = (self.colorVal + self.colorRangeVal)%180
 
         # Saturation
             # lower
         if self.satVal - self.satRangeVal >= 0:
             value[0][1] = self.satVal - self.satRangeVal
         else:
-            value[0][1] = 255 - abs(self.satVal - self.satRangeVal)
+            value[0][1] = 0
+            # value[0][1] = 255 - abs(self.satVal - self.satRangeVal)
             # upper
-        if self.satVal + self.satRangeVal <=360:
+        if self.satVal + self.satRangeVal <=255:
             value[1][1] = self.satVal + self.satRangeVal
         else:
-            value[1][1] = (self.satVal + self.satRangeVal)%255
+            value[1][1] = 255
+            # value[1][1] = (self.satVal + self.satRangeVal)%255
 
         # Brightness
             # lower 
         if self.brightVal - self.brightRangeVal >= 0:
             value[0][2] = self.brightVal - self.brightRangeVal
         else:
-            value[0][2] = 255 - abs(self.brightVal - self.brightRangeVal)
+            value[0][2] = 0
+            # value[0][2] = 255 - abs(self.brightVal - self.brightRangeVal)
             # upper
-        if self.brightVal + self.brightRangeVal <= 360:
+        if self.brightVal + self.brightRangeVal <= 255:
             value[1][2] = self.brightVal + self.brightRangeVal
         else:
-            value[1][2] = (self.brightVal + self.brightRangeVal)%255
+            value[1][2] = 255 
+            # value[1][2] = (self.brightVal + self.brightRangeVal)%255
         
         return value
 

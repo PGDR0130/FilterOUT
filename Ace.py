@@ -1,11 +1,11 @@
-from audioop import reverse
-from tkinter.tix import Tree
+import cv2
 from cv2 import bitwise_not
 import numpy as np
-import cv2
 from hsvfilter import HsvFilter
 from Toggle import CreateSlides, Get_toggle_value
 from SimpleToggle import SimpleToggle
+from cv2SaveImg import saveCurr
+import time
 
 img = cv2.imread('test1.jpg', cv2.COLOR_BGR2HSV)
 
@@ -32,7 +32,8 @@ while True:
         lower = np.array(lowup[0])
         upper = np.array(lowup[1])
         reverse = simpTogg.reverseState
-        print(lower, upper)
+        if simpTogg.saveHandle(toFalse=True):
+            saveCurr(result)
 
     mask = cv2.inRange(img, lower, upper)
 
@@ -42,7 +43,7 @@ while True:
     else:
         mask = bitwise_not(mask)
         result = cv2.bitwise_and(img, img, mask=mask)
-
+        
     # showing result
     cv2.imshow('img', result)
     cv2.imshow('mask', mask)
@@ -52,3 +53,6 @@ while True:
     if cv2.waitKey(1) == ord('q'):
         cv2.destroyAllWindows()
         break
+
+    # limit cpu usage
+    time.sleep(0.05)
